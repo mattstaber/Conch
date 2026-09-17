@@ -1,0 +1,96 @@
+name: Build and release
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+jobs:
+  build:
+    # macOS 27 APIs require both the 27 SDK and a macOS 27 test host.
+    runs-on: xcode-27
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check toolchain
+        run: |
+          xcodebuild -version
+          xcrun --sdk macosx --show-sdk-version
+          sw_vers
+          python3 - <<'PY'
+          import subprocess
+          for command in [['sw_vers', '-productVersion'], ['xcrun', '--sdk', 'macosx', '--show-sdk-version']]:
+              version = subprocess.check_output(command, text=True).strip()
+              if int(version.split('.')[0]) < 27:
+                  raise SystemExit('Conch requires macOS 27 and the macOS 27 SDK')
+          PY
+      - name: Verify generated project
+        run: |
+          python3 scripts/generate-project.py
+          git diff --exit-code -- Conch.xcodeproj
+      - name: Check Swift formatting
+        run: xcrun swift-format lint --strict --recursive Sources/Conch Tests/ConchTests Package.swift scripts/InspectAudio.swift
+      - name: Test
+        run: ./scripts/test.sh
+      - name: Build app
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+          CONCH_BUILD_NUMBER: ${{ github.run_number }}
+        run: |
+          if [[ "$REF_TYPE" == tag ]]; then
+            export CONCH_VERSION="${REF_NAME#v}"
+          fi
+          ./scripts/build.sh
+      - name: Package and checksum
+        run: ./scripts/package.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Conch-macOS-arm64
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 14
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: Conch-macOS-arm64
+          path: dist
+      - name: Publish downloadable release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          cat > release-notes.md <<'NOTES'
+          Download the Conch ZIP below (not GitHub's source-code archives), unzip it, and move Conch.app to Applications.
+
+          Requires an Apple silicon Mac running macOS 27 or later. Allow System Audio Recording when prompted; Conch processes audio locally and never saves or transmits it.
+
+          This build is ad-hoc signed, not Developer ID signed or notarized. macOS may block its first launch. Only if you trust this release, use System Settings → Privacy & Security → Open Anyway after attempting to open it. Do not disable Gatekeeper or SIP.
+
+          Conch is an early release. It does not prevent FaceTime ducking, and app/device compatibility is still being validated. See the README and validation notes before relying on it for calls. A SHA-256 checksum is attached alongside the ZIP.
+          NOTES
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" dist/* --clobber
+          else
+            gh release create "$RELEASE_TAG" dist/* --verify-tag \
+              --title "Conch $RELEASE_TAG" --notes-file release-notes.md
+          fi

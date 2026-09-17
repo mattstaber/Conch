@@ -113,3 +113,16 @@ state/icon-only follow-up. September 16 live QuickTime regression measured full
 0.019994522, half 0.009997261, mute 0 and restored 0.009997261 (245 callbacks).
 The undocumented ownership lookup remains in the main build, with guarded public
 fallbacks; these results do not establish compatibility with every audio application.
+
+## Public repository preparation — 2026-09-17
+
+- Swift formatting/lint and all 17 deterministic Swift tests passed; the optional
+  live test was skipped. C callback sanitizer tests passed.
+- Native Release build and ad-hoc signature verification passed with the current
+  icon source. This cleanup did not change the panel or slider behavior.
+- The distribution ZIP was extracted locally; its app signature, executable
+  permissions, bundled MIT license and SHA-256 checksum verified successfully.
+- Workflow YAML and embedded shell steps were parsed locally. GitHub Actions has
+  not run this workflow yet. No tag, remote push, or release was created here.
+- Developer ID signing, notarization and a downloaded build on a separate Mac
+  remain unverified. The default automated release is explicitly ad-hoc signed.

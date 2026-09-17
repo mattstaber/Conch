@@ -19,7 +19,7 @@ PID plus launch date determines row identity; no ownership cache survives a laun
 `ProcessMetadataProviding` isolates process queries for deterministic tests.
 `SystemProcessMetadata` optionally resolves the undocumented
 `responsibility_get_pid_responsible_for_pid` using `dlsym` once. This is an
-independent implementation included in the main build by explicit user decision,
+independent implementation included in the main build,
 informed by [Vorssaint's resolver](https://github.com/vorssaint/vorssaint-utils/blob/main/Sources/Vorssaint/Services/ResponsibleProcess.swift).
 No source is imported. Missing symbols/invalid identities fall back to public
 metadata. Future macOS releases may remove or change the SPI; App Store acceptance
@@ -72,7 +72,7 @@ format. Unsupported devices retain direct playback with an error and Retry.
 `NSStatusItem` anchors an arrow-free borderless `NSPanel` with no open/close animation.
 `NSGlassEffectView` owns the system glass; there are no custom blur layers.
 A stock NSSlider preserves the system Liquid Glass control appearance. A
-noninteractive SwiftUI meter overlay displays activity using the current user-edited
+noninteractive SwiftUI meter overlay displays activity using the native slider
 layout. Its timer uses common run-loop modes during tracking. Native Settings,
 SF Symbol status image and NSWorkspace icons adapt to system appearance.
 Reduce Transparency uses an opaque system background. Reduce Motion suppresses
@@ -109,4 +109,4 @@ Dragging or stepping to zero displays mute immediately. Raising volume clears
 zero-volume mute while preserving an explicit icon mute. Hardware volume writes
 set the device mute property at zero where supported, and clear it for positive volume.
 The Icon Composer source separates channel rails and fader caps into two glass
-groups, with caps above the channels. The current user-edited panel layout is preserved.
+groups, with caps above the channels. The panel retains its native slider appearance.

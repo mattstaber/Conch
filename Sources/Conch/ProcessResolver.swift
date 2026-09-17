@@ -19,8 +19,8 @@ protocol ProcessMetadataProviding {
     func executablePath(for pid: pid_t) -> String?
 }
 
-/// Undocumented macOS SPI, explicitly authorized for the main build. This is an
-/// independent implementation, not imported Vorssaint code. The symbol is optional;
+/// Optional undocumented macOS ownership SPI. This independently implemented
+/// lookup is isolated here so public metadata remains the fallback;
 /// no binary link dependency or guessed owner is introduced when it is absent.
 private enum ProcessResponsibility {
     typealias Lookup = @convention(c) (pid_t) -> pid_t

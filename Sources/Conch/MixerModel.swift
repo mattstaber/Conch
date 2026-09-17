@@ -31,7 +31,6 @@ import CoreAudio
 @MainActor final class MixerModel: ObservableObject {
     @Published var rows: [AppRow] = []
     @Published var error: String?
-    @Published var outputName = "System output"
     @Published var showInactive: Bool {
         didSet {
             defaults.set(showInactive, forKey: "showInactive")
@@ -176,7 +175,6 @@ import CoreAudio
                 for row in rows { row.error = nil }
                 observeOutput()
             }
-            outputName = (try? HAL.string(output, kAudioObjectPropertyName)) ?? "No output device"
             let objects = try HAL.objects(HAL.system, kAudioHardwarePropertyProcessObjectList)
             for id in Set(processObservations.keys).subtracting(objects) {
                 processObservations.removeValue(forKey: id)

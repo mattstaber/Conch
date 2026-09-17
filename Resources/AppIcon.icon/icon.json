@@ -11,7 +11,7 @@
         {
           "fill-specializations" : [
             {
-              "value" : "automatic"
+              "value" : "system-light"
             },
             {
               "appearance" : "dark",
@@ -51,8 +51,16 @@
         {
           "fill-specializations" : [
             {
+              "value" : "system-light"
+            },
+            {
               "appearance" : "dark",
-              "value" : "none"
+              "value" : {
+                "linear-gradient" : [
+                  "display-p3:0.12092,0.46973,0.76023,1.00000",
+                  "display-p3:0.08092,0.27720,0.66000,1.00000"
+                ]
+              }
             }
           ],
           "glass" : true,

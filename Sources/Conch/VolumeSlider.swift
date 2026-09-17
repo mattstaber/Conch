@@ -127,11 +127,13 @@ struct AudioLevelMeter: View {
                     .fill(.clear)
 
                 Capsule()
-                    .fill(LinearGradient(
-                        colors: [.white.opacity(0.25), .white.opacity(0.75)],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    ))
+                    .fill(
+                        LinearGradient(
+                            colors: [.white.opacity(0.25), .white.opacity(0.75)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
                     .frame(
                         width: geometry.size.width * displayedLevel
                     )

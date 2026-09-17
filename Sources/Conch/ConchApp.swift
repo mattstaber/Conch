@@ -176,7 +176,7 @@ struct MixerPanel: View {
             ) {
                 Color.clear
                     .frame(height: 4)
-                
+
                 Text("Sound")
                     .font(.headline.weight(.medium))
                     .foregroundStyle(.primary.opacity(0.8))
