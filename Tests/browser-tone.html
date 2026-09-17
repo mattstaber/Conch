@@ -1,0 +1,9 @@
+<!doctype html><meta charset="utf-8"><title>Conch audio test</title>
+<style>body{font:16px system-ui;max-width:34em;margin:4em auto;color:CanvasText;background:Canvas}button{font:inherit;padding:.6em 1em}p{line-height:1.5}</style>
+<h1>Conch browser audio test</h1><p>This local fixture generates a quiet 440 Hz reference tone at 0.02 peak amplitude. It uses no microphone, network, or recorded audio.</p>
+<button id="play">Play tone</button> <button id="stop" disabled>Stop</button><p id="state">Stopped</p>
+<script>
+let context, oscillator;
+document.getElementById("play").onclick=async()=>{context=new AudioContext();await context.resume();oscillator=context.createOscillator();const gain=context.createGain();gain.gain.value=.02;oscillator.frequency.value=440;oscillator.connect(gain).connect(context.destination);oscillator.start();document.getElementById("play").disabled=true;document.getElementById("stop").disabled=false;document.getElementById("state").textContent='Playing';};
+document.getElementById("stop").onclick=async()=>{oscillator.stop();await context.close();document.getElementById("play").disabled=false;document.getElementById("stop").disabled=true;document.getElementById("state").textContent='Stopped';};
+</script>
