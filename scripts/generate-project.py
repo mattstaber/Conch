@@ -37,7 +37,7 @@ def configs(name, common):
         body=' '.join(f'{k} = {q(v)};' for k,v in settings.items())
         configs.append(add(name+mode, f'isa = XCBuildConfiguration; name = {mode}; buildSettings = {{ {body} }};'))
     return add(name+'configs','isa = XCConfigurationList; buildConfigurations = '+refs(configs)+'; defaultConfigurationIsVisible = 0; defaultConfigurationName = Release;')
-common={'MACOSX_DEPLOYMENT_TARGET':'27.0','SDKROOT':'macosx','SWIFT_VERSION':'5.0','CLANG_ENABLE_MODULES':'YES','CLANG_C_LANGUAGE_STANDARD':'c11'}
+common={'MACOSX_DEPLOYMENT_TARGET':'27.0','SDKROOT':'macosx','SWIFT_VERSION':'5.0','CLANG_ENABLE_MODULES':'YES','CLANG_C_LANGUAGE_STANDARD':'c11','SYMROOT':'$(SRCROOT)/.build/Xcode/Build/Products'}
 project_configs=configs('project',common)
 app_configs=configs('app',{'PRODUCT_NAME':'Conch','PRODUCT_BUNDLE_IDENTIFIER':'dev.conch.mixer','INFOPLIST_FILE':'Resources/Info.plist','SWIFT_INCLUDE_PATHS':'$(SRCROOT)/Sources/Realtime/include','HEADER_SEARCH_PATHS':'$(SRCROOT)/Sources/Realtime/include','CODE_SIGN_STYLE':'Automatic','ENABLE_HARDENED_RUNTIME':'YES','ASSETCATALOG_COMPILER_APPICON_NAME':'AppIcon'})
 test_configs=configs('tests',{'PRODUCT_NAME':'ConchTests','PRODUCT_BUNDLE_IDENTIFIER':'dev.conch.mixer.tests','GENERATE_INFOPLIST_FILE':'YES','TEST_HOST':'$(BUILT_PRODUCTS_DIR)/Conch.app/Contents/MacOS/Conch','BUNDLE_LOADER':'$(TEST_HOST)','SWIFT_INCLUDE_PATHS':'$(SRCROOT)/Sources/Realtime/include'})

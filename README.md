@@ -85,7 +85,18 @@ cd Conch
 open build/Conch.app
 ```
 
-You can also open `Conch.xcodeproj` and run the **Conch** scheme. The build script
+For development, open `Conch.xcodeproj` and run the **Conch** scheme (Debug).
+The Xcode project builds the native app bundle, layered icon, and hosted tests;
+`Package.swift` provides lightweight tests and a fallback executable build.
+Both use the same source files.
+
+`./scripts/debug.sh` builds the same Debug app as Xcode at
+`.build/Xcode/Build/Products/Debug/Conch.app`. The release build is staged at
+`build/Conch.app`. Quit any running Conch copy before switching between them.
+Opening an existing app directly does not rebuild it; use Xcode Run or the build
+script after source changes. See [the project map](docs/Project.md) for file roles.
+
+The build script
 prefers Xcode's native layered icon compilation. A SwiftPM fallback uses the
 committed ICNS asset when only compatible Command Line Tools are available.
 

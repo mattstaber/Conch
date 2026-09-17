@@ -11,13 +11,23 @@ slider appearance. There are no third-party runtime dependencies.
 - `Resources/AppIcon.icon/`: editable layered Icon Composer source.
 - `docs/`: architecture, feasibility, validation and release notes.
 
+See [Project layout](docs/Project.md) for the source and generated folders.
+
 Run `./scripts/test.sh` before submitting changes. It checks state, ownership,
 hardware-volume behavior and the C callback under AddressSanitizer and
 UndefinedBehaviorSanitizer. Ordinary tests do not capture audio. Then run
 `./scripts/build.sh` to verify the native Xcode build and ad-hoc signature.
 
 When adding Swift files, run `python3 scripts/generate-project.py` and commit the
-updated Xcode project. Use `./scripts/format.sh` for consistent Swift formatting.
+updated Xcode project. The build/debug/live-test scripts also regenerate it.
+Keep project-setting changes in the generator so regeneration preserves them.
+Xcode and the scripts share `.build/Xcode/Build/Products` through the project's
+`SYMROOT` setting. `./scripts/debug.sh` builds the Debug app there; use the Conch
+scheme in `Conch.xcodeproj` to run with the debugger. Opening `Package.swift`
+instead selects the Swift package executable, not the native application target.
+Quit an existing Conch instance before switching builds.
+
+Use `./scripts/format.sh` for consistent Swift formatting.
 After changing icon layers, run `./scripts/icon.sh` with Icon Composer installed
 and commit the PNG and ICNS exports along with the source.
 

@@ -7,15 +7,17 @@ mkdir -p "$CLANG_MODULE_CACHE_PATH" build
 staging=$(mktemp -d "$PWD/.build/bundle.XXXXXX")
 trap 'rm -rf "$staging"' EXIT
 app="$staging/Conch.app"
+python3 scripts/generate-project.py
 if xcodebuild -version >/dev/null 2>&1; then
     xcodebuild -project Conch.xcodeproj -scheme Conch -configuration Release \
-        -derivedDataPath .build/XcodeRelease CODE_SIGNING_ALLOWED=NO \
+        -derivedDataPath .build/Xcode CODE_SIGNING_ALLOWED=NO \
         ARCHS=arm64 ONLY_ACTIVE_ARCH=NO build
-    ditto .build/XcodeRelease/Build/Products/Release/Conch.app "$app"
+    ditto .build/Xcode/Build/Products/Release/Conch.app "$app"
 else
-    swift build --disable-sandbox --scratch-path .build -c release
+    swift build --disable-sandbox --scratch-path .build/swiftpm -c release
     mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
-    cp .build/release/Conch "$app/Contents/MacOS/Conch"
+    bin_path=$(swift build --disable-sandbox --scratch-path .build/swiftpm -c release --show-bin-path)
+    cp "$bin_path/Conch" "$app/Contents/MacOS/Conch"
     cp Resources/Info.plist "$app/Contents/Info.plist"
     cp Resources/AppIcon.icns "$app/Contents/Resources/"
 fi

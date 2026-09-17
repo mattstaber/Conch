@@ -67,7 +67,9 @@ Xcode 27. Sign with an owner-provided Developer ID, submit a zip using `notaryto
 staple, and verify Gatekeeper on a separate Mac. Do not disable SIP or Gatekeeper.
 The project does not claim App Store sandbox compatibility.
 
-## Results on this checkout — 2026-09-16
+## Historical results — September 16–17, 2026
+
+The entries below record earlier runs, not verification of every subsequent edit.
 
 Host: Apple silicon MacBook Pro, macOS 27.0 build 26A428; Xcode 27.0 build
 27A266a and macOS 27 SDK. The machine initially had only selected Command Line
@@ -84,7 +86,7 @@ Tools; full Xcode setup completed during development.
 | Live QuickTime route test | Passed: full peak 0.019994522, half 0.009997261, muted 0, restored 0.009997261; 245 callbacks in September 16 regression |
 | UI slider and independent mute | QuickTime slider remained unchanged on mute; real native icon and control shown |
 | Session lifecycle | Paused player retained at 0.65; quitting removed row; idle relaunch stayed absent |
-| Screenshots | `Panel.png`, `Empty.png`, `LiveApps.png`, and `Dark.png` capture the September 16 panel revision; subsequent user visual edits are not represented |
+| Screenshots | Outdated September 16 screenshots were removed; current interface screenshots have not been captured |
 | Chrome local fixture | Automated browser opening was blocked by the browser tool's URL policy; no workaround attempted |
 | FaceTime call / echo cancellation | Not tested: needs a willing participant and acoustic/call evaluation |
 | AirPods, USB/DAC, HDMI, device switching | Not exercised with physical devices |
@@ -126,3 +128,20 @@ fallbacks; these results do not establish compatibility with every audio applica
   not run this workflow yet. No tag, remote push, or release was created here.
 - Developer ID signing, notarization and a downloaded build on a separate Mac
   remain unverified. The default automated release is explicitly ad-hoc signed.
+
+## Build-layout cleanup — September 17, 2026
+
+- Removed stale local builds, obsolete screenshots, unused icon appearance PNGs,
+  and local package/editor state. Retained editable icon layers, README PNG, and
+  fallback ICNS; native Xcode compilation generates appearance variants.
+- Native Xcode and script builds now share `.build/Xcode/Build/Products`.
+  Default Xcode Debug build settings were inspected without a DerivedData override
+  and resolve to that same Debug product directory.
+- Fresh Debug and Release builds succeeded with native icon compilation; both
+  app signatures verified. The staged release app is `build/Conch.app`.
+- Python project reproducibility and C ASan/UBSan tests passed. SwiftPM and hosted
+  Xcode tests each passed all 17 deterministic tests; the live audio test was skipped.
+- Swift formatting, shell syntax, local documentation links, and diff whitespace
+  checks passed.
+- No new live audio, visual/accessibility, remote CI, notarization, or distribution
+  acceptance is claimed by this cleanup. The earlier hardware results remain historical.

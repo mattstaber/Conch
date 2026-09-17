@@ -57,9 +57,9 @@ decaying release). The meter is not a microphone or post-speaker measurement.
 A one-second watchdog exists only while routes exist; a malformed callback layout
 or three missed progress checks destroys the route and reports direct playback.
 It is a recovery mechanism, not a realtime guarantee. `AudioDeviceStop` and
-`AudioDeviceDestroyIOProcID` precede context destruction; aggregate and tap are
-then destroyed. Setup failures unwind the same path. Original audio can briefly
-play at its own gain during rebuild or recovery, even if the saved mute is true.
+`AudioDeviceDestroyIOProcID` stop callbacks first; the aggregate and tap are then
+destroyed before freeing the C context. Setup failures unwind the same path.
+Original audio can briefly play at its own gain during rebuild or recovery, even if the saved mute is true.
 
 Default-output changes rebuild routes using the same row state. Physical stream
 format, sample rate and liveness changes invalidate the route. Applications using
@@ -69,18 +69,20 @@ format. Unsupported devices retain direct playback with an error and Retry.
 
 ## Presentation and preferences
 
-`NSStatusItem` anchors an arrow-free borderless `NSPanel` with no open/close animation.
-`NSGlassEffectView` owns the system glass; there are no custom blur layers.
+`ConchApp` presents the mixer through SwiftUI `MenuBarExtra` with the window style.
+SwiftUI and macOS own the menu-bar window presentation and background.
 A stock NSSlider preserves the system Liquid Glass control appearance. A
 noninteractive SwiftUI meter overlay displays activity using the native slider
-layout. Its timer uses common run-loop modes during tracking. Native Settings,
-SF Symbol status image and NSWorkspace icons adapt to system appearance.
-Reduce Transparency uses an opaque system background. Reduce Motion suppresses
-meter interpolation. The current meter overlay uses a white gradient; increased-contrast
+layout. The visual width also scales by the selected volume, so it is an activity
+indicator rather than a calibrated level display. Its timer uses common run-loop
+modes during tracking. Native Settings, SF Symbol status image and NSWorkspace icons adapt to system appearance.
+Background accessibility behavior is delegated to the system presentation.
+Reduce Motion suppresses meter interpolation. The current meter overlay uses a white gradient; increased-contrast
 acceptance remains unverified. VoiceOver
 gets app-specific action labels and volume values, without visible percentages.
 Rows are sorted when the panel opens; activity does not reorder controls under a
-pointer. Quit releases routes. Launch at Login uses `SMAppService.mainApp`.
+pointer. Quitting ends the process and its routes. Launch at Login uses
+`SMAppService.mainApp`.
 
 ## Known design costs
 

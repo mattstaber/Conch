@@ -1,4 +1,6 @@
 .build/
+.swiftpm/
+Conch.xcodeproj/project.xcworkspace/
 build/
 .DS_Store
 *.xcuserstate

@@ -1,7 +1,9 @@
 # macOS 27 feasibility investigation
 
 Investigated 2026-09-16, macOS 27.0 (26A428), Command Line Tools Swift 6.4,
-installed MacOSX27.0.sdk. Full Xcode is not installed. Research preceded engine implementation.
+installed MacOSX27.0.sdk. Full Xcode was not installed at the start of the
+investigation; Xcode 27 was installed before the native build and hosted tests.
+These are dated research findings, preceding engine implementation.
 
 ## Findings and decision
 
@@ -17,7 +19,7 @@ installed MacOSX27.0.sdk. Full Xcode is not installed. Research preceded engine 
 | Tap position? | Public tap contract captures outgoing process audio. It does not promise a placement before/after all voice-processing attenuation, nor exempt replay from ducking. Do not claim a tap defeats ducking. Requires controlled live-call measurement. |
 | Driver/helper? | Process taps and an in-process private aggregate suffice for gain. No installed virtual driver, Audio Server Plug-In, privileged helper or system extension. A driver adds routing/installation complexity without a documented ducking bypass guarantee. |
 | Permissions? | System Audio Recording via `NSAudioCaptureUsageDescription`, requested by starting the tap. No private TCC APIs. No screen frames, microphone capture, microphone gain changes or Accessibility permission. |
-| Distribution? | Public APIs; normal Developer ID hardened runtime signing/notarization path. No SIP changes. Actual notarization requires the owner's signing credentials and distribution testing. |
+| Distribution? | Audio control uses public APIs; app ownership also uses an optional undocumented lookup with public-metadata fallbacks (see Architecture.md). Normal Developer ID hardened runtime signing/notarization path. No SIP changes. Actual notarization requires the owner's signing credentials and distribution testing. |
 
 ## Implementation boundary
 
