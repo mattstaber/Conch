@@ -18,7 +18,8 @@ for path in source_files + headers + tests + [root/'Resources/Info.plist', root/
     typ = {'.swift':'sourcecode.swift', '.c':'sourcecode.c.c', '.h':'sourcecode.c.h', '.plist':'text.plist.xml', '.icon':'folder.iconcomposer.icon'}.get(path.suffix,'sourcecode.module-map')
     file_ids[rel] = add(rel, f'isa = PBXFileReference; lastKnownFileType = {typ}; path = {q(rel)}; sourceTree = SOURCE_ROOT;')
 def phase(name, paths, kind='PBXSourcesBuildPhase'):
-    builds = [add('build:'+name+str(p), f'isa = PBXBuildFile; fileRef = {file_ids[str(p.relative_to(root))]};') for p in paths]
+    # Stable IDs across local and CI checkout paths.
+    builds = [add('build:'+name+str(p.relative_to(root)), f'isa = PBXBuildFile; fileRef = {file_ids[str(p.relative_to(root))]};') for p in paths]
     return add(name, f'isa = {kind}; buildActionMask = 2147483647; files = {refs(builds)}; runOnlyForDeploymentPostprocessing = 0;')
 app_sources = phase('app-sources', source_files)
 app_resources = phase('app-resources', [root/'Resources/AppIcon.icon'], 'PBXResourcesBuildPhase')
